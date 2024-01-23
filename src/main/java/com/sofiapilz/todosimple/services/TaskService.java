@@ -3,6 +3,8 @@ package com.sofiapilz.todosimple.services;
 import com.sofiapilz.todosimple.models.Task;
 import com.sofiapilz.todosimple.models.User;
 import com.sofiapilz.todosimple.repositories.TaskRepository;
+import com.sofiapilz.todosimple.services.exceptions.DataBindingViolationExceptions;
+import com.sofiapilz.todosimple.services.exceptions.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +23,7 @@ public class TaskService {
 
     public Task findById(Long id) {
         Optional<Task> task = this.taskRepository.findById(id);
-        return task.orElseThrow(() -> new RuntimeException
+        return task.orElseThrow(() -> new ObjectNotFoundException
                 ("Tarefa não encontrada! id:" + id + ", Tipo: " + Task.class.getName()));
     }
 
@@ -49,17 +51,16 @@ public class TaskService {
         return this.taskRepository.save(newObj);
     }
 
-
+    // n precisaria necessariamente pq a Task n eh forenkey em nenhum lugar, n eh q nem no User
+    // pq se tu apagar o User sem deletar as Tasks dele da erro
+    // entao nnc vai cair no catch pq nenhuma outra entidade do sistema depende de Task
+    // mas Task depende do User
     public void delete(Long id) {
         findById(id);
-        // n precisaria necessariamente pq a Task n eh forenkey em nenhum lugar, n eh q nem no User
-        // pq se tu apagar o User sem deletar as Tasks dele da erro
-        // entao nnc vai cair no catch pq nenhuma outra entidade do sistema depende de Task
-        // mas Task depende do User
         try {
             this.taskRepository.deleteById(id);
         } catch (Exception e) {
-            throw new RuntimeException("Não é possícel excluir, pois há entidades relacionadas!");
+            throw new DataBindingViolationExceptions("Não é possícel excluir, pois há entidades relacionadas!");
         }
 
 

@@ -1,26 +1,32 @@
 package com.sofiapilz.todosimple.services;
 
 import com.sofiapilz.todosimple.models.User;
-import com.sofiapilz.todosimple.repositories.TaskRepository;
+import com.sofiapilz.todosimple.models.enums.ProfileEnum;
 import com.sofiapilz.todosimple.repositories.UserRepository;
+import com.sofiapilz.todosimple.services.exceptions.DataBindingViolationExceptions;
+import com.sofiapilz.todosimple.services.exceptions.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class UserService {
 
     @Autowired
-    private UserRepository userRepository;
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
+    // salva a senha do usuario ja criptografada
 
     @Autowired
-    private TaskRepository taskRepository;
+    private UserRepository userRepository;
 
     public User findById(Long id) {
         Optional<User> user = this.userRepository.findById(id);
-        return user.orElseThrow(() -> new RuntimeException
+        return user.orElseThrow(() -> new ObjectNotFoundException
                 ("Usuário não encontrado! Id:" + id + ", Tipo: " + User.class.getName()));
     }
 
@@ -28,15 +34,17 @@ public class UserService {
     public User create(User obj) {
         // garante q vai ser criado um novo id
         obj.setId(null);
+        obj.setPassword(this.bCryptPasswordEncoder.encode(obj.getPassword())); //senha criptografada
+        //lista pra garantir q o usuario será criado com o código de numero 2 (normal)
+        obj.setProfiles(Stream.of(ProfileEnum.USER.getCode()).collect(Collectors.toSet()));
         obj = this.userRepository.save(obj);
-        this.taskRepository.saveAll(obj.getTasks());
         return obj;
     }
 
     @Transactional
     public User update(User obj) {
         User newobj = findById(obj.getId());
-        newobj.setPassword(obj.getPassword());
+        newobj.setPassword(this.bCryptPasswordEncoder.encode(obj.getPassword())); //garante q a senha nova sera criptografada
         return this.userRepository.save(newobj);
     }
 
@@ -45,9 +53,8 @@ public class UserService {
         try {
             this.userRepository.deleteById(id);
         } catch (Exception e) {
-            throw new RuntimeException("Não é possícel excluir, pois há entidades relacionadas!");
+            throw new DataBindingViolationExceptions("Não é possícel excluir, pois há entidades relacionadas!");
         }
-
-
     }
+
 }
