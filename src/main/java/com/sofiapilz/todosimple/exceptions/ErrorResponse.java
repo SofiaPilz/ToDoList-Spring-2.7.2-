@@ -34,9 +34,10 @@ public class ErrorResponse {
     }
 
 
-//    public String toJson() {
-//        return "{\"status\": " + getStatus() + ", " + "\"message\": \"" + getMessage() + "\"}";
-//    }
+    public String toJson() {
+        return "{\"status\": " + getStatus() + ", " +
+                "\"message\": \"" + getMessage() + "\"}";
+    }
 
 
 }
