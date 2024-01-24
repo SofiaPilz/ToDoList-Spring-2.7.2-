@@ -1,5 +1,6 @@
 package com.sofiapilz.todosimple.configs;
 
+import com.sofiapilz.todosimple.security.JWTUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,6 +29,9 @@ public class SecurityConfig {
 
     @Autowired
     private UserDetailsService userDetailsService;
+
+    @Autowired
+    private JWTUtil jwtUtil;
 
     // caminhos de URL que requerem autenticação ou autorização para solicitações HTTP
     private static final String[] PUBLIC_MATCHERS = {
