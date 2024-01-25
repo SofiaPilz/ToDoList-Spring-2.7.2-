@@ -24,9 +24,10 @@ public class UserSpringSecurity implements UserDetails {
         this.id = id;
         this.username = username;
         this.password = password;
-        this.authorities = profileEnums.stream().map(x -> new SimpleGrantedAuthority(x.getDescription())).collect(Collectors.toSet());
+        this.authorities = profileEnums.stream().map(x -> new SimpleGrantedAuthority(x.getDescription())).collect(Collectors.toList());
     }
 
+    // nao sera implementado nesse projeto mas o spring oferece suporte para todas esse metodos de validação
     //nao permite q uma conta expire
     @Override
     public boolean isAccountNonExpired() {
@@ -51,7 +52,8 @@ public class UserSpringSecurity implements UserDetails {
         return true;
     }
 
-    //verifica as autoridades dos perfils
+    //verifica as autoridades dos perfils (normal ou adm)
+    //usando o ROLE_ADM e a ROLE_USER
     public boolean hasRole(ProfileEnum profileEnum) {
         return getAuthorities().contains(new SimpleGrantedAuthority(profileEnum.getDescription()));
     }

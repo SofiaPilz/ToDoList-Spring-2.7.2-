@@ -9,7 +9,7 @@ import java.util.Objects;
 @Getter
 public enum ProfileEnum {
 
-//tipos de acessos
+//tipos de acessos, ROLE é uma palavra reservada do spring
     ADMIN(1, "ROLE_ADMIN"),
     USER(2, "ROLE_USER");
 
@@ -17,7 +17,6 @@ public enum ProfileEnum {
     private String description;
 
     public static ProfileEnum toEnum(Integer code) {
-
         if (Objects.isNull(code))
             return null;
 
@@ -25,6 +24,6 @@ public enum ProfileEnum {
             if (code.equals(x.getCode()))
                 return x;
         }
-        throw  new IllegalArgumentException("Invalid code:" + code);
+        throw new IllegalArgumentException("Invalid code:" + code);
     }
 }
