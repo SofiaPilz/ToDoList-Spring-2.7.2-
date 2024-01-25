@@ -26,17 +26,16 @@ public class UserService {
 
     public User findById(Long id) {
         Optional<User> user = this.userRepository.findById(id);
-        return user.orElseThrow(() -> new ObjectNotFoundException
-                ("Usuário não encontrado! Id:" + id + ", Tipo: " + User.class.getName()));
+        return user.orElseThrow(() -> new ObjectNotFoundException(
+                "Usuário não encontrado! Id:" + id + ", Tipo: " + User.class.getName()));
     }
 
     @Transactional
     public User create(User obj) {
-        // garante q vai ser criado um novo id
-        obj.setId(null);
-        obj.setPassword(this.bCryptPasswordEncoder.encode(obj.getPassword())); //senha criptografada
+        obj.setId(null); // garante q vai ser criado um novo id
+        obj.setPassword(this.bCryptPasswordEncoder.encode(obj.getPassword())); //momento q criptografa a senha e salva
         //lista pra garantir q o usuario será criado com o código de numero 2 (normal)
-        obj.setProfiles(Stream.of(ProfileEnum.USER.getCode()).collect(Collectors.toSet()));
+        obj.setProfiles(Stream.of(ProfileEnum.USER.getCode()).collect(Collectors.toSet())); //garante q td usuario criado sera do tipo 2
         obj = this.userRepository.save(obj);
         return obj;
     }
@@ -44,7 +43,7 @@ public class UserService {
     @Transactional
     public User update(User obj) {
         User newobj = findById(obj.getId());
-        newobj.setPassword(this.bCryptPasswordEncoder.encode(obj.getPassword())); //garante q a senha nova sera criptografada
+        newobj.setPassword(this.bCryptPasswordEncoder.encode(obj.getPassword())); //momento q criptografa a senha e salva
         return this.userRepository.save(newobj);
     }
 

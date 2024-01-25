@@ -58,13 +58,15 @@ public class User {
 
 
     //tabela com a lista das perfieis ja registrados
-    @ElementCollection(fetch = FetchType.EAGER)
+    // Set = lista d valores unicos
+    @ElementCollection(fetch = FetchType.EAGER) //busca tds os perfis quando quiser um usuario, em vez d buscar só o usuario
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @CollectionTable(name = "user_profile")
     @Column(name = "profile", nullable = false)
     private Set<Integer> profiles = new HashSet<>();
 
     //rotorna a lista d inteiros, transforma o integer n profileEnum
+    //transforma os intergers em um set/valor de profileEnum
     public Set<ProfileEnum> getProfile() {
         return this.profiles.stream().map(x -> ProfileEnum.toEnum(x)).collect(Collectors.toSet());
     }
