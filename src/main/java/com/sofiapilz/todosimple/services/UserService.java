@@ -3,9 +3,11 @@ package com.sofiapilz.todosimple.services;
 import com.sofiapilz.todosimple.models.User;
 import com.sofiapilz.todosimple.models.enums.ProfileEnum;
 import com.sofiapilz.todosimple.repositories.UserRepository;
+import com.sofiapilz.todosimple.security.UserSpringSecurity;
 import com.sofiapilz.todosimple.services.exceptions.DataBindingViolationExceptions;
 import com.sofiapilz.todosimple.services.exceptions.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +27,9 @@ public class UserService {
     private UserRepository userRepository;
 
     public User findById(Long id) {
+        UserSpringSecurity userSpringSecurity = authenticated();
+
+
         Optional<User> user = this.userRepository.findById(id);
         return user.orElseThrow(() -> new ObjectNotFoundException
                 ("Usuário não encontrado! Id:" + id + ", Tipo: " + User.class.getName()));
@@ -54,6 +59,14 @@ public class UserService {
             this.userRepository.deleteById(id);
         } catch (Exception e) {
             throw new DataBindingViolationExceptions("Não é possícel excluir, pois há entidades relacionadas!");
+        }
+    }
+
+    public UserSpringSecurity authenticated() {
+        try {
+            return (UserSpringSecurity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        } catch (Exception e) {
+            return null;
         }
     }
 

@@ -49,6 +49,13 @@ public class JWTUtil {
         return false;
     }
 
+    public String getUSername(String token) {
+        Claims claims= getClaims(token);
+        if (Objects.nonNull(claims))
+            return claims.getSubject();
+        return null;
+    }
+
     //decriptograçaão do token, processo oposto do metodo de cima
     private Claims getClaims(String token) {
     SecretKey key = getKeyBySecret();
@@ -58,4 +65,6 @@ public class JWTUtil {
         return null;
     }
     }
+
+
 }

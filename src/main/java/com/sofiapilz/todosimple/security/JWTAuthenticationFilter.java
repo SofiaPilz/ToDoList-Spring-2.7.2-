@@ -3,7 +3,6 @@ package com.sofiapilz.todosimple.security;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sofiapilz.todosimple.exceptions.GlobalExceptionHandler;
 import com.sofiapilz.todosimple.models.User;
-import io.jsonwebtoken.io.IOException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -15,6 +14,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.io.IOException;
 
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 // td q cai no /login vem pra essa classe, cai todas as requisições e tenta autentica-las
@@ -43,7 +43,8 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
             return  authentication;
 
-        } catch (Exception e) {
+            //IOException
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
