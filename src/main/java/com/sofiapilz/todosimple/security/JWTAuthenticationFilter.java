@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
-// td q cai no /login vem pra essa classe
+// td q cai no /login vem pra essa classe, cai todas as requisições e tenta autentica-las
 
     private AuthenticationManager authenticationManager;
 
@@ -38,15 +38,17 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
             UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                     userCredentials.getUsername(), userCredentials.getPassword(), new ArrayList<>());
+
             Authentication authentication = this.authenticationManager.authenticate(authToken);
 
             return  authentication;
 
         } catch (Exception e) {
-            throw new RuntimeException();
+            throw new RuntimeException(e);
         }
     }
 
+    //caso a autenticação nao tenha sucesso, gera o token e retorna pro usuario
     @Override
     protected void successfulAuthentication(HttpServletRequest request,
     HttpServletResponse response, FilterChain filterChain, Authentication authentication) throws IOException, ServletException {
