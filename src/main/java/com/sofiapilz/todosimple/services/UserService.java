@@ -4,14 +4,17 @@ import com.sofiapilz.todosimple.models.User;
 import com.sofiapilz.todosimple.models.enums.ProfileEnum;
 import com.sofiapilz.todosimple.repositories.UserRepository;
 import com.sofiapilz.todosimple.security.UserSpringSecurity;
+import com.sofiapilz.todosimple.services.exceptions.AuthorizationException;
 import com.sofiapilz.todosimple.services.exceptions.DataBindingViolationExceptions;
 import com.sofiapilz.todosimple.services.exceptions.ObjectNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -26,9 +29,15 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+
+    //verificaçao antes d buscar o usuario
+    //so passa se tiver buscando o proprio id ou adm
+    //se o id q esta sendo pesquisado n eh o ms do q esta logado, n ai poder pesquisar
     public User findById(Long id) {
         UserSpringSecurity userSpringSecurity = authenticated();
-
+        if (!Objects.nonNull(userSpringSecurity)
+                || !userSpringSecurity.hasRole(ProfileEnum.ADMIN) && !id.equals(userSpringSecurity.getId()))
+            throw new AuthorizationException("Acesso negado!");
 
         Optional<User> user = this.userRepository.findById(id);
         return user.orElseThrow(() -> new ObjectNotFoundException(
@@ -48,6 +57,7 @@ public class UserService {
     @Transactional
     public User update(User obj) {
         User newobj = findById(obj.getId());
+        newobj.setPassword(obj.getPassword());
         newobj.setPassword(this.bCryptPasswordEncoder.encode(obj.getPassword())); //momento q criptografa a senha e salva
         return this.userRepository.save(newobj);
     }
@@ -61,12 +71,13 @@ public class UserService {
         }
     }
 
-    public UserSpringSecurity authenticated() {
+    public static UserSpringSecurity authenticated() {
         try {
             return (UserSpringSecurity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         } catch (Exception e) {
             return null;
         }
     }
+
 
 }

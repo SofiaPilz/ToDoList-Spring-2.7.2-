@@ -2,7 +2,7 @@ package com.sofiapilz.todosimple.controllers;
 
 import com.sofiapilz.todosimple.models.Task;
 import com.sofiapilz.todosimple.services.TaskService;
-import com.sofiapilz.todosimple.services.UserService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -21,11 +21,6 @@ public class TaskController {
     @Autowired
     private TaskService taskService;
 
-
-    @Autowired
-    private UserService userService;
-
-
     @GetMapping("/{id}")
     public ResponseEntity<Task> findById(@PathVariable Long id) {
         Task obj = this.taskService.findById(id);
@@ -34,10 +29,9 @@ public class TaskController {
 
 
     // retorna tds as tasks de um usuario
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<Task>> findAllByUserId(@PathVariable Long userId){
-        this.userService.findById(userId);
-        List<Task> objs = this.taskService.findAllByUserId(userId);
+    @GetMapping("/user")
+    public ResponseEntity<List<Task>> findAllByUser() {
+        List<Task> objs = this.taskService.findAllByUser();
         return ResponseEntity.ok().body(objs);
     }
 
@@ -46,13 +40,13 @@ public class TaskController {
     @Validated
     public ResponseEntity<Void> create(@Validated @RequestBody Task obj) {
         this.taskService.create(obj);
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}").buildAndExpand(obj.getId()).toUri();
         return ResponseEntity.created(uri).build();
     }
 
 
     @PutMapping("/{id}")
-    @Validated
     public ResponseEntity<Void> update(@Valid @RequestBody Task obj, @PathVariable Long id) {
         obj.setId(id);
         this.taskService.update(obj);

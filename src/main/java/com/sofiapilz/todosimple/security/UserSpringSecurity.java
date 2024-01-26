@@ -20,7 +20,6 @@ public class UserSpringSecurity implements UserDetails {
     private String password;
     private Collection<? extends GrantedAuthority> authorities;
 
-    // aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
     public UserSpringSecurity(Long id, String username, String password, Set<ProfileEnum> profileEnums) {
         this.id = id;
         this.username = username;
