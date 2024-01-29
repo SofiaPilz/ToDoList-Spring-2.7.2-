@@ -3,6 +3,7 @@ package com.sofiapilz.todosimple.services;
 import com.sofiapilz.todosimple.models.Task;
 import com.sofiapilz.todosimple.models.User;
 import com.sofiapilz.todosimple.models.enums.ProfileEnum;
+import com.sofiapilz.todosimple.models.projection.TaskProjection;
 import com.sofiapilz.todosimple.repositories.TaskRepository;
 import com.sofiapilz.todosimple.security.UserSpringSecurity;
 import com.sofiapilz.todosimple.services.exceptions.AuthorizationException;
@@ -30,7 +31,7 @@ public class TaskService {
                 "Tarefa não encontrada! Id: " + id + ", Tipo: " + Task.class.getName()));
 
         UserSpringSecurity userSpringSecurity = UserService.authenticated();
-        if (!Objects.isNull(userSpringSecurity) || !userSpringSecurity
+        if (Objects.isNull(userSpringSecurity) || !userSpringSecurity
                 .hasRole(ProfileEnum.ADMIN) && !userHasTask(userSpringSecurity, task))
             throw  new AuthorizationException("Acesso negado!");
 
@@ -38,12 +39,12 @@ public class TaskService {
     }
 
     // etorna tds as tasks
-    public List<Task> findAllByUser() {
+    public List<TaskProjection> findAllByUser() {
         UserSpringSecurity userSpringSecurity = UserService.authenticated();
         if (Objects.isNull(userSpringSecurity))
             throw new AuthorizationException("Acesso negado!");
 
-        List<Task> tasks = this.taskRepository.findByUser_Id(userSpringSecurity.getId());
+        List<TaskProjection> tasks = this.taskRepository.findByUser_Id(userSpringSecurity.getId());
         return tasks;
     }
 

@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
@@ -25,12 +26,9 @@ import java.util.stream.Collectors;
 @Table(name = User.TABLE_NAME)
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
-@EqualsAndHashCode
+@Data
 public class User {
-    public interface CreatUser{}
-    public interface UpdateUser{}
+
     public static final String TABLE_NAME = "user";
 
     @Id
@@ -39,16 +37,14 @@ public class User {
     private Long id;
 
     @Column(name = "username", length = 100, nullable = false, unique = true)
-    @NotNull(groups = CreatUser.class)
-    @NotEmpty(groups = CreatUser.class)
-    @Size(groups = CreatUser.class, min = 2, max = 100)
+    @Size(min = 2, max = 100)
+    @NotBlank
     private String username;
 
-@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "password", length = 60, nullable = false)
-    @NotNull(groups = {CreatUser.class, UpdateUser.class})
-    @NotEmpty(groups = {CreatUser.class, UpdateUser.class})
-    @Size(groups = {CreatUser.class, UpdateUser.class}, min = 8, max = 60)
+    @Size(min = 8, max = 60)
+    @NotBlank
     private String password;
 
     // user é qm mapea as tasks
@@ -59,7 +55,8 @@ public class User {
 
     //tabela com a lista das perfieis ja registrados
     // Set = lista d valores unicos
-    @ElementCollection(fetch = FetchType.EAGER) //busca tds os perfis quando quiser um usuario, em vez d buscar só o usuario
+    @ElementCollection(fetch = FetchType.EAGER)
+    //busca tds os perfis quando quiser um usuario, em vez d buscar só o usuario
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @CollectionTable(name = "user_profile")
     @Column(name = "profile", nullable = false)

@@ -52,7 +52,8 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     //caso a autenticação nao tenha sucesso, gera o token e retorna pro usuario
     @Override
     protected void successfulAuthentication(HttpServletRequest request,
-    HttpServletResponse response, FilterChain filterChain, Authentication authentication) throws IOException, ServletException {
+    HttpServletResponse response, FilterChain filterChain, Authentication authentication)
+            throws IOException, ServletException {
         UserSpringSecurity userSpringSecurity = (UserSpringSecurity) authentication.getPrincipal();
         String username = userSpringSecurity.getUsername();
         String token = this.jwtUtil.generateToken(username);

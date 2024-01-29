@@ -31,7 +31,7 @@ public class JWTUtil {
     }
 
     //secretkey dificil de decifrar
-    private SecretKey getKeyBySecret(){
+    private SecretKey getKeyBySecret() {
         SecretKey key = Keys.hmacShaKeyFor(this.secret.getBytes());
         return key;
     }
@@ -49,8 +49,8 @@ public class JWTUtil {
         return false;
     }
 
-    public String getUSername(String token) {
-        Claims claims= getClaims(token);
+    public String getUsername(String token) {
+        Claims claims = getClaims(token);
         if (Objects.nonNull(claims))
             return claims.getSubject();
         return null;
@@ -58,12 +58,12 @@ public class JWTUtil {
 
     //decriptograçaão do token, processo oposto do metodo de cima
     private Claims getClaims(String token) {
-    SecretKey key = getKeyBySecret();
-    try {
-        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
-    } catch (Exception e) {
-        return null;
-    }
+        SecretKey key = getKeyBySecret();
+        try {
+            return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
 

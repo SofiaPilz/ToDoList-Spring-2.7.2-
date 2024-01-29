@@ -1,10 +1,12 @@
 package com.sofiapilz.todosimple.controllers;
 
 import com.sofiapilz.todosimple.models.Task;
+import com.sofiapilz.todosimple.models.projection.TaskProjection;
 import com.sofiapilz.todosimple.services.TaskService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -30,15 +32,21 @@ public class TaskController {
 
     // retorna tds as tasks de um usuario
     @GetMapping("/user")
-    public ResponseEntity<List<Task>> findAllByUser() {
-        List<Task> objs = this.taskService.findAllByUser();
+    public ResponseEntity<List<TaskProjection>> findAllByUser() {
+        List<TaskProjection> objs = this.taskService.findAllByUser();
         return ResponseEntity.ok().body(objs);
     }
+
+//    @PreAuthorize("ROLE_ADMIN")
+//    public ResponseEntity<List<Task>> findAll() {
+//        List<Task> objs = this.taskService.findById();
+//        return ResponseEntity.ok(objs);
+//    }
 
 
     @PostMapping
     @Validated
-    public ResponseEntity<Void> create(@Validated @RequestBody Task obj) {
+    public ResponseEntity<Void> create(@Valid @RequestBody Task obj) {
         this.taskService.create(obj);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}").buildAndExpand(obj.getId()).toUri();
@@ -59,5 +67,6 @@ public class TaskController {
         this.taskService.delete(id);
         return ResponseEntity.noContent().build();
     }
+
 
 }
