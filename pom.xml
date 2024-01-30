@@ -8,7 +8,7 @@
 		<version>2.7.2</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.lucasangelo</groupId>
+	<groupId>com.sofiapilz</groupId>
 	<artifactId>todosimple</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>todosimple</name>
@@ -16,6 +16,16 @@
 	<properties>
 		<java.version>17</java.version>
 	</properties>
+	<packaging>jar</packaging>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+		<finalName>todosimpleapp</finalName>
+	</build>
 
 	<dependencies>
 
@@ -112,13 +122,5 @@
 
 	</dependencies>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
 
 </project>
